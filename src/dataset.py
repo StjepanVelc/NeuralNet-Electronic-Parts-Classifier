@@ -92,11 +92,15 @@ def get_transforms(image_size: int) -> Tuple[transforms.Compose, transforms.Comp
 
 	train_tfms = transforms.Compose(
 		[
-			transforms.Resize((image_size, image_size)),
+			transforms.RandomResizedCrop(image_size, scale=(0.75, 1.0), ratio=(0.85, 1.15)),
 			transforms.RandomHorizontalFlip(p=0.5),
-			transforms.RandomRotation(degrees=12),
-			transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.15),
+			transforms.RandomVerticalFlip(p=0.1),
+			transforms.RandomRotation(degrees=20),
+			transforms.RandomAffine(degrees=10, translate=(0.08, 0.08), scale=(0.9, 1.1), shear=6),
+			transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.2, hue=0.03),
+			transforms.RandomPerspective(distortion_scale=0.18, p=0.25),
 			transforms.ToTensor(),
+			transforms.RandomErasing(p=0.2, scale=(0.02, 0.12), ratio=(0.3, 3.3)),
 			transforms.Normalize(mean=mean, std=std),
 		]
 	)

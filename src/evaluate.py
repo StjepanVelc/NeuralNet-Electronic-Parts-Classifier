@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from typing import Any, Mapping, cast
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -54,19 +55,43 @@ def evaluate() -> None:
 		output_dict=True,
 		zero_division=0,
 	)
+	report_mapping = cast(Mapping[str, Any], report)
 	write_json(config.reports_dir / "classification_report.json", report)
 
+	problematic_classes = [
+		{
+			"class": class_name,
+			"precision": class_report["precision"],
+			"recall": class_report["recall"],
+			"f1_score": class_report["f1-score"],
+			"support": class_report["support"],
+		}
+		for class_name in class_names
+		for class_report in [cast(Mapping[str, Any], report_mapping[class_name])]
+	]
+	problematic_classes.sort(key=lambda item: item["f1_score"])
+	write_json(config.reports_dir / "problematic_classes.json", problematic_classes)
+
 	cm = confusion_matrix(y_true, y_pred, labels=labels)
-	plt.figure(figsize=(16, 12))
-	sns.heatmap(cm, cmap="Blues", cbar=True)
+	plt.figure(figsize=(22, 18))
+	sns.heatmap(
+		cm,
+		cmap="Blues",
+		cbar=True,
+		xticklabels=class_names,
+		yticklabels=class_names,
+	)
 	plt.title("Confusion Matrix")
 	plt.xlabel("Predicted")
 	plt.ylabel("True")
+	plt.xticks(rotation=90)
+	plt.yticks(rotation=0)
 	plt.tight_layout()
 	plt.savefig(config.figures_dir / "confusion_matrix.png", dpi=200)
 	plt.close()
 
 	print("Saved reports/classification_report.json")
+	print("Saved reports/problematic_classes.json")
 	print("Saved reports/figures/confusion_matrix.png")
 
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from typing import Dict, Tuple, cast
+from typing import Dict, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,7 +10,6 @@ import torch.nn as nn
 from sklearn.metrics import accuracy_score, f1_score
 from torch.optim import AdamW
 from tqdm import tqdm
-from torchvision.datasets import ImageFolder
 
 from src.config import Config
 from src.dataset import build_dataloaders
@@ -83,15 +82,7 @@ def train(args: argparse.Namespace) -> None:
 	train_loader, val_loader, test_loader, class_to_idx = build_dataloaders(config)
 	num_classes = len(class_to_idx)
 	model = build_model(num_classes=num_classes, model_name=args.model, pretrained=True).to(device)
-
-	train_dataset = cast(ImageFolder, train_loader.dataset)
-	targets = np.array(train_dataset.targets)
-	class_counts = np.bincount(targets)
-	class_weights = 1.0 / np.maximum(class_counts, 1)
-	class_weights = class_weights / class_weights.mean()
-	class_weights_tensor = torch.tensor(class_weights, dtype=torch.float32, device=device)
-
-	loss_fn = nn.CrossEntropyLoss(weight=class_weights_tensor)
+	loss_fn = nn.CrossEntropyLoss()
 	optimizer = AdamW(model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay)
 
 	history = []
@@ -196,7 +187,7 @@ def parse_args() -> argparse.Namespace:
 	parser.add_argument(
 		"--model",
 		type=str,
-		default="resnet18",
+		default="efficientnet_b0",
 		choices=["resnet18", "efficientnet_b0"],
 		help="Backbone architecture",
 	)
