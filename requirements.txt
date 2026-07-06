@@ -1,0 +1,11 @@
+torch
+torchvision
+scikit-learn
+pillow
+numpy
+matplotlib
+seaborn
+streamlit
+tqdm
+pyyaml
+protobuf==3.20.3
