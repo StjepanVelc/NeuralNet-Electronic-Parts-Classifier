@@ -1,2 +1,20 @@
-.venv
+.venv/
 __pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.vscode/
+
+# Local data and model artifacts
+data/raw/
+data/train/
+data/val/
+data/test/
+data/processed/
+models/
+*.pt
+*.pth
+
+# Local notebook/temporary files
+.ipynb_checkpoints/
+*.log
