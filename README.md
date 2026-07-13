@@ -60,6 +60,12 @@ reports/             # Metrics, reports, and figures
 src/                 # Training, evaluation, and prediction code
 ```
 
+## Analyst Notebook
+
+For a full analytics-oriented walkthrough (KPI summary, learning curves, per-class diagnostics, confusion matrix review, and actionable recommendations), open:
+
+- [docs/project_analysis_notebook.ipynb](docs/project_analysis_notebook.ipynb)
+
 ## Quick Start
 
 1. Install dependencies:
